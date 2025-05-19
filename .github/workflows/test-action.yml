@@ -29,6 +29,10 @@ jobs:
           TAG_NAME="v0.1.0"
           [ ! -n ${{ inputs.tag_name }} ] && TAG_NAME=${{ inputs.tag_name }}
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.COMMITISH }}
       - name: Test step
         uses: E4-Actions/move-tag@feature/move-tag
         with:
