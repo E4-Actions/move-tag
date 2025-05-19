@@ -13,7 +13,6 @@ on:
         type: string
         required: true
         default: 'v0.1.0'
-  push:
 
 jobs:
   test-job:
@@ -41,7 +40,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
       - name: Test step
-        uses: E4-Actions/move-tag@feature/move-tag
+        uses: E4-Actions/move-tag@develop
         with:
           commitish: ${{ env.COMMITISH }}
           tag_name: ${{ env.TAG_NAME }}
