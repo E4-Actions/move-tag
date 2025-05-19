@@ -48,7 +48,7 @@ jobs:
           tag_name: ${{ env.TAG_NAME }}
   auto-tagging-for-release:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'release/') && github.event.pull_request.merged == true
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'release/')
     permissions:
       contents: write
 
