@@ -3,17 +3,34 @@
 on:
   workflow_dispatch:
     inputs:
-      target:
-        description: Target
+      commitish:
+        description: 'Commitsh'
         type: string
-        default: E4-Actions
+        required: true
+        default: 'master'
+      tag_name:
+        description: 'Tag'
+        type: string
+        required: true
+        default: 'v0.1.0'
+  push:
 
 jobs:
   test-job:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set env
+        run: |
+          COMMITISH="master"
+          [ ! -n ${{ inputs.commitish }} ] && COMMITISH=${{ inputs.commitish }}
+          echo "COMMITISH=$COMMITISH" >> $GITHUB_ENV
+
+          TAG_NAME="v0.1.0"
+          [ ! -n ${{ inputs.tag_name }} ] && TAG_NAME=${{ inputs.tag_name }}
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
       - name: Test step
-        uses: E4-Actions/template-action@master
+        uses: E4-Actions/move-tag@feature/move-tag
         with:
-          target: ${{ inputs.target }}
+          commitish: ${{ env.COMMITISH }}
+          tag_name: ${{ env.TAG_NAME }}
