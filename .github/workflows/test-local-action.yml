@@ -1,4 +1,4 @@
-﻿name: 'Test Action'
+﻿name: 'Test Local Action'
 
 on:
   workflow_dispatch:
@@ -15,27 +15,22 @@ on:
         default: 'v0.1.0'
 
 jobs:
-  auto-tagging:
+  test-local-action:
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - name: 'Set env for workflow dispatch event'
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          echo "COMMITISH=${{ inputs.commitish }}" >> "$GITHUB_ENV"
-          echo "TAG_NAME=${{ inputs.tag_name }}" >> "$GITHUB_ENV"
       - name: 'Checkout repository'
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.COMMITISH }}
+          ref: ${{ inputs.commitish }}
       - name: 'Configure github actions bot'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-      - name: 'Move or create tag'
-        uses: E4-Actions/move-tag@develop
+      - name: 'Test local action'
+        uses: ./
         with:
-          commitish: ${{ env.COMMITISH }}
-          tag_name: ${{ env.TAG_NAME }}
+          commitish: ${{ inputs.commitish }}
+          tag_name: ${{ inputs.tag_name }}
