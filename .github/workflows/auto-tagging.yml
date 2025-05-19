@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: 'Set env for pull request event'
-        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'release/') && github.event.pull_request.merged == true
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'release/') #&& github.event.pull_request.merged == true
         run: |
           COMMITISH="${{ github.base_ref }}"
           echo "COMMITISH=$COMMITISH" >> "$GITHUB_ENV"
