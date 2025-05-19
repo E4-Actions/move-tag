@@ -1,0 +1,19 @@
+﻿name: Test Action
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Target
+        type: string
+        default: E4-Actions
+
+jobs:
+  test-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Test step
+        uses: E4-Actions/template-action@master
+        with:
+          target: ${{ inputs.target }}

@@ -1,0 +1,11 @@
+﻿name: Greet
+inputs:
+  target:
+    description: Target to greet
+    default: ${{ github.repository_owner }}
+runs:
+  using: composite
+  steps:
+    - name: Greet
+      run: echo "Hello, ${{ inputs.target }}!"
+      shell: bash
