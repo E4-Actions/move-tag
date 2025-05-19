@@ -25,11 +25,11 @@ jobs:
       - name: Set env
         run: |
           COMMITISH="master"
-          [ ! -n ${{ inputs.commitish }} ] && COMMITISH=${{ inputs.commitish }}
+          [ -n ${{ inputs.commitish }} ] && COMMITISH=${{ inputs.commitish }}
           echo "COMMITISH=$COMMITISH" >> $GITHUB_ENV
 
           TAG_NAME="v0.1.0"
-          [ ! -n ${{ inputs.tag_name }} ] && TAG_NAME=${{ inputs.tag_name }}
+          [ -n ${{ inputs.tag_name }} ] && TAG_NAME=${{ inputs.tag_name }}
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
       - name: Checkout repository
         uses: actions/checkout@v4
