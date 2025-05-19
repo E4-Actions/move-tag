@@ -1,4 +1,4 @@
-﻿name: Test Action
+﻿name: 'Test Action'
 
 on:
   workflow_dispatch:
@@ -15,31 +15,26 @@ on:
         default: 'v0.1.0'
 
 jobs:
-  test-job:
+  auto-tagging:
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - name: Set env
+      - name: 'Set env for workflow dispatch event'
+        if: github.event_name == 'workflow_dispatch'
         run: |
-          COMMITISH="master"
-          [[ "${{ github.ref }}" == "refs/heads/"* ]] && COMMITISH=$(echo "${{ github.ref }}" | sed -e 's/^refs\/heads\///')
-          [ -n "${{ inputs.commitish }}" ] && COMMITISH="${{ inputs.commitish }}"
-          echo "COMMITISH=$COMMITISH" >> "$GITHUB_ENV"
-
-          TAG_NAME="v0.1.0"
-          [ -n "${{ inputs.tag_name }}" ] && TAG_NAME="${{ inputs.tag_name }}"
-          echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_ENV"
-      - name: Checkout repository
+          echo "COMMITISH=${{ inputs.commitish }}" >> "$GITHUB_ENV"
+          echo "TAG_NAME=${{ inputs.tag_name }}" >> "$GITHUB_ENV"
+      - name: 'Checkout repository'
         uses: actions/checkout@v4
         with:
           ref: ${{ env.COMMITISH }}
-      - name: Configure github actions bot
+      - name: 'Configure github actions bot'
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      - name: Test step
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: 'Move or create tag'
         uses: E4-Actions/move-tag@develop
         with:
           commitish: ${{ env.COMMITISH }}
