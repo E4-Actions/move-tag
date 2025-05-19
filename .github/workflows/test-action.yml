@@ -25,6 +25,7 @@ jobs:
       - name: Set env
         run: |
           COMMITISH="master"
+          [[ "${{ github.ref }}" == "refs/heads/"* ]] && COMMITISH=$(echo "${{ github.ref }}" | sed -e 's/^refs\/heads\///')
           [ -n "${{ inputs.commitish }}" ] && COMMITISH="${{ inputs.commitish }}"
           echo "COMMITISH=$COMMITISH" >> "$GITHUB_ENV"
 
