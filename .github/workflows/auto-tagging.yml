@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - 'release/**'
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 'master'
 
 jobs:
   auto-tagging:
@@ -12,6 +17,14 @@ jobs:
       contents: write
 
     steps:
+      - name: 'Set env for pull request event'
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'release/') && github.event.pull_request.merged == true
+        run: |
+          COMMITISH="${{ github.base_ref }}"
+          echo "COMMITISH=$COMMITISH" >> "$GITHUB_ENV"
+
+          TAG_NAME=$(echo "${{ github.head_ref }}" | sed -e 's/^release\///')
+          echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_ENV"
       - name: 'Set env for push event'
         if: github.event_name == 'push' && github.ref_type == 'branch' && startsWith(github.ref_name, 'release/')
         run: |
