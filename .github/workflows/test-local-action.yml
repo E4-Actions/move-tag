@@ -1,0 +1,36 @@
+﻿name: 'Test Local Action'
+
+on:
+  workflow_dispatch:
+    inputs:
+      commitish:
+        description: 'Commitsh'
+        type: string
+        required: true
+        default: 'master'
+      tag_name:
+        description: 'Tag'
+        type: string
+        required: true
+        default: 'v0.1.0'
+
+jobs:
+  test-local-action:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.commitish }}
+      - name: 'Configure github actions bot'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: 'Test local action'
+        uses: ./
+        with:
+          commitish: ${{ inputs.commitish }}
+          tag_name: ${{ inputs.tag_name }}
