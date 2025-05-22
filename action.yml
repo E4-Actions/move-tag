@@ -12,10 +12,22 @@ runs:
     - name: 'Configure git'
       shell: bash
       run: |
+        git fetch --tags
+
         git config user.name "e4-actions-bot"
         git config user.email "e4-actions-bot@users.noreply.github.com"
     - name: 'Move Tag'
       shell: bash
+      env:
+        TAG_NAME: ${{ inputs.tag_name }}
+        COMMITISH: ${{ inputs.commitish }}
       run: |
-        git tag -fa "${{ inputs.tag_name }}" -m "${{ inputs.tag_name }}" "${{ inputs.commitish }}"
-        git push origin "${{ inputs.tag_name }}" --force
+        TAG_SHA=$(git show-ref refs/tags/$TAG_NAME | cut -d ' ' -f1)
+        HEAD_SHA=$(git show-ref refs/heads/$COMMITISH | cut -d ' ' -f1)
+        if [ "$TAG_SHA" == "$HEAD_SHA" ]; then
+          echo "$TAG_NAME is already set on $COMMITISH"
+          exit 0
+        fi
+
+        git tag -fa "$TAG_NAME" -m "$TAG_NAME" "$COMMITISH"
+        git push origin "$TAG_NAME" --force
