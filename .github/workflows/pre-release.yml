@@ -1,0 +1,60 @@
+name: 'Pre-Release'
+
+on:
+  push:
+    branches:
+      - 'release/**'
+
+jobs:
+  set-variables:
+    runs-on: ubuntu-latest
+    outputs:
+      commitish: ${{ steps.set-variables.outputs.commitish }}
+      tag_name: ${{ steps.set-variables.outputs.tag_name }}
+
+    steps:
+      - name: 'Set variables'
+        id: set-variables
+        run: |
+          COMMITISH="${{ github.ref_name }}"
+          echo "commitish=$COMMITISH" >> "$GITHUB_OUTPUT"
+
+          TAG_NAME=$(echo "${{ github.ref_name }}" | sed -e 's/^release\///')
+          echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
+  create-pre-release:
+    runs-on: ubuntu-latest
+    needs: set-variables
+    env:
+      COMMITISH: ${{ needs.set-variables.outputs.commitish }}
+      TAG_NAME: ${{ needs.set-variables.outputs.tag_name }}
+    permissions:
+      contents: write
+
+    steps:
+      - name: 'Create pre-release'
+        uses: E4-Actions/create-release@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commitish: ${{ env.COMMITISH }}
+          tag_name: ${{ env.TAG_NAME }}
+          prerelease: true
+          generate_release_notes: true
+  move-tag:
+    runs-on: ubuntu-latest
+    needs: [set-variables, create-pre-release]
+    env:
+      COMMITISH: ${{ needs.set-variables.outputs.commitish }}
+      TAG_NAME: ${{ needs.set-variables.outputs.tag_name }}
+    permissions:
+      contents: write
+
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.COMMITISH }}
+      - name: 'Move tag'
+        uses: ./
+        with:
+          commitish: ${{ env.COMMITISH }}
+          tag_name: ${{ env.TAG_NAME }}

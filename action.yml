@@ -9,8 +9,13 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: 'Configure git'
+      shell: bash
+      run: |
+        git config user.name "e4-actions-bot"
+        git config user.email "e4-actions-bot@users.noreply.github.com"
     - name: 'Move Tag'
+      shell: bash
       run: |
         git tag -fa "${{ inputs.tag_name }}" -m "${{ inputs.tag_name }}" "${{ inputs.commitish }}"
         git push origin "${{ inputs.tag_name }}" --force
-      shell: bash
